@@ -5,6 +5,7 @@
 
 // The module 'assert' provides assertion methods from node
 import * as assert from 'assert';
+import {BazelCommandBuilder} from '../src/commands'
 
 // You can import and use all API from the 'vscode' module
 // as well as import your extension to test it
@@ -19,4 +20,12 @@ suite("Extension Tests", function () {
         assert.equal(-1, [1, 2, 3].indexOf(5));
         assert.equal(-1, [1, 2, 3].indexOf(0));
     });
+
+    test("correct build command", async function() {
+        var builder = new BazelCommandBuilder
+        var cmd_str = await builder.build('//hello:world')
+                            .deletePackages(['//x'])
+                            .execute()
+        assert.equal(cmd_str, 'bazel build --delete_packages="//x" //hello:world')
+    })
 });
